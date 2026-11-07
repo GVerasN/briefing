@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Respostas dos briefings</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="estilo.css">
+<style>
+  main { padding-bottom: 60px; display: grid; gap: 16px; }
+  .linha { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .linha input { flex: 1 1 200px; min-width: 0; }
+  .item { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; display: grid; gap: 10px; }
+  .item h3 { margin: 0; font: 700 1.1rem var(--font-display); }
+  .meta { color: var(--muted); font-size: .88rem; display: flex; flex-wrap: wrap; gap: 4px 14px; }
+  .tag { background: var(--accent-soft); color: var(--accent); border-radius: 99px; padding: 2px 10px; font-weight: 600; font-size: .8rem; }
+  pre { margin: 0; white-space: pre-wrap; word-break: break-word; font: .82rem/1.55 ui-monospace, Consolas, monospace; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 12px; max-height: 420px; overflow: auto; }
+  .status { color: var(--muted); font-size: .9rem; min-height: 1.4em; }
+  details.card { gap: 12px; }
+  details summary { cursor: pointer; font-weight: 600; }
+  code { word-break: break-all; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap"><div class="top-row"><h1>Respostas dos briefings</h1><span class="passo" id="contagem"></span></div></div>
+</header>
+<main class="wrap" style="padding-top:20px">
+  <div class="card" id="login">
+    <div class="q">
+      <label for="chave">Chave do painel</label>
+      <div class="linha"><input type="password" id="chave" autocomplete="current-password"><button class="btn primary" id="entrar" type="button" style="flex:0 0 auto">Entrar</button></div>
+      <div class="hint">Fica guardada neste navegador.</div>
+    </div>
+  </div>
+
+  <div class="linha" id="barra-acoes" hidden>
+    <button class="btn sm" id="atualizar" type="button">Atualizar</button>
+    <button class="btn sm" id="baixar-todas" type="button">Baixar todas (.md)</button>
+    <a class="btn sm" id="planilha" target="_blank" rel="noopener">Abrir planilha</a>
+    <button class="btn sm" id="sair" type="button">Sair</button>
+  </div>
+  <div class="status" id="status" role="status"></div>
+  <div id="lista" style="display:grid;gap:12px"></div>
+
+  <details class="card" id="links" hidden>
+    <summary>Gerar link para um vendedor</summary>
+    <div class="q">
+      <label for="ref">Nome de quem vai mandar o link</label>
+      <input type="text" id="ref" placeholder="Ex.: marcelo">
+      <label for="negocio">Nome do negócio (opcional, já vem preenchido)</label>
+      <input type="text" id="negocio" placeholder="Ex.: Pet Shop Amigo Fiel">
+      <code id="link-gerado"></code>
+      <div class="linha"><button class="btn sm" id="copiar-link" type="button">Copiar link</button></div>
+    </div>
+  </details>
+</main>
+
+<script src="config.js"></script>
+<script>
+const $ = (s) => document.querySelector(s);
+const LS = "briefing-painel-chave";
+const lsGet = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+const lsDel = (k) => { try { localStorage.removeItem(k); } catch {} };
+let itens = [];
+
+const slug = (s) => (s || "briefing").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "site";
+const quando = (iso) => { const d = new Date(iso); return isNaN(d) ? iso : d.toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" }); };
+
+function baixar(nome, texto) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([texto], { type: "text/markdown;charset=utf-8" }));
+  a.download = nome; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+async function copiar(texto, msg) {
+  try { await navigator.clipboard.writeText(texto); $("#status").textContent = msg || "Copiado."; }
+  catch { $("#status").textContent = "Não deu para copiar aqui. Use o botão de baixar."; }
+}
+
+async function carregar() {
+  const chave = lsGet(LS);
+  if (!chave) { mostrarLogin(true); return; }
+  $("#status").textContent = "Carregando…";
+  try {
+    const r = await fetch(ENDPOINT + "?chave=" + encodeURIComponent(chave));
+    const j = await r.json();
+    if (!j.ok) {
+      if (j.erro === "chave") { lsDel(LS); mostrarLogin(true); $("#status").textContent = "Chave errada."; return; }
+      throw new Error(j.erro);
+    }
+    mostrarLogin(false);
+    itens = j.itens || [];
+    if (j.planilha) $("#planilha").href = j.planilha;
+    render();
+    $("#status").textContent = "Atualizado às " + new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) + ".";
+  } catch (e) {
+    $("#status").textContent = "Não consegui carregar as respostas. Confira a internet e toque em Atualizar.";
+  }
+}
+
+function mostrarLogin(on) {
+  $("#login").hidden = !on; $("#barra-acoes").hidden = on; $("#links").hidden = on;
+  if (on) { $("#lista").innerHTML = ""; $("#contagem").textContent = ""; }
+}
+
+function render() {
+  const box = $("#lista"); box.innerHTML = "";
+  $("#contagem").textContent = itens.length === 1 ? "1 resposta" : itens.length + " respostas";
+  if (!itens.length) { const p = document.createElement("p"); p.className = "hint"; p.textContent = "Nenhuma resposta ainda."; box.appendChild(p); return; }
+  itens.forEach((it) => {
+    const card = document.createElement("article"); card.className = "item";
+    const h = document.createElement("h3"); h.textContent = it.nome || "Sem nome";
+    const meta = document.createElement("div"); meta.className = "meta";
+    [quando(it.recebido), it.ramo, it.respondente, it.whatsapp].filter(Boolean).forEach((t) => { const s = document.createElement("span"); s.textContent = t; meta.appendChild(s); });
+    if (it.ref) { const t = document.createElement("span"); t.className = "tag"; t.textContent = "via " + it.ref; meta.appendChild(t); }
+    const acoes = document.createElement("div"); acoes.className = "linha";
+    const bB = document.createElement("button"); bB.className = "btn sm primary"; bB.style.flex = "0 0 auto"; bB.type = "button"; bB.textContent = "Baixar .md";
+    bB.addEventListener("click", () => baixar(`briefing-${slug(it.nome)}.md`, it.md));
+    const bC = document.createElement("button"); bC.className = "btn sm"; bC.type = "button"; bC.textContent = "Copiar";
+    bC.addEventListener("click", () => copiar(it.md, "Briefing copiado. Cole no Claude e peça: \"monta o briefing\"."));
+    const bV = document.createElement("button"); bV.className = "btn sm"; bV.type = "button"; bV.textContent = "Ver"; bV.setAttribute("aria-expanded", "false");
+    const pre = document.createElement("pre"); pre.hidden = true; pre.textContent = it.md;
+    bV.addEventListener("click", () => { pre.hidden = !pre.hidden; bV.textContent = pre.hidden ? "Ver" : "Esconder"; bV.setAttribute("aria-expanded", String(!pre.hidden)); });
+    acoes.append(bB, bC, bV);
+    const zap = String(it.whatsapp || "").replace(/\D/g, "").replace(/^55/, "");
+    if (zap.length >= 10) { const a = document.createElement("a"); a.className = "btn sm"; a.href = "https://wa.me/55" + zap; a.target = "_blank"; a.rel = "noopener"; a.textContent = "WhatsApp"; acoes.appendChild(a); }
+    card.append(h, meta, acoes, pre); box.appendChild(card);
+  });
+}
+
+function linkVendedor() {
+  const base = location.href.replace(/admin\.html.*$/, "");
+  const p = new URLSearchParams();
+  const ref = $("#ref").value.trim(); const neg = $("#negocio").value.trim();
+  if (ref) p.set("ref", ref); if (neg) p.set("negocio", neg);
+  const q = p.toString();
+  return base + (q ? "?" + q : "");
+}
+
+$("#entrar").addEventListener("click", () => { const v = $("#chave").value.trim(); if (v) { lsSet(LS, v); carregar(); } });
+$("#chave").addEventListener("keydown", (e) => { if (e.key === "Enter") $("#entrar").click(); });
+$("#atualizar").addEventListener("click", carregar);
+$("#sair").addEventListener("click", () => { lsDel(LS); mostrarLogin(true); $("#status").textContent = ""; });
+$("#baixar-todas").addEventListener("click", () => {
+  if (!itens.length) return;
+  baixar(`briefings-${new Date().toISOString().slice(0, 10)}.md`, itens.map((it) => it.md).join("\n\n---\n\n"));
+});
+["#ref", "#negocio"].forEach((s) => $(s).addEventListener("input", () => { $("#link-gerado").textContent = linkVendedor(); }));
+$("#copiar-link").addEventListener("click", () => copiar(linkVendedor(), "Link copiado."));
+$("#link-gerado").textContent = linkVendedor();
+carregar();
+</script>
+</body>
+</html>

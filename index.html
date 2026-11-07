@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Briefing do seu site</title>
+<meta name="description" content="Conte sobre o seu negócio para a gente montar o seu site.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="estilo.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231b7f4b'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11.5' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="top-row">
+      <h1>Briefing do seu site</h1>
+      <span class="passo" id="passo"></span>
+    </div>
+    <div class="barra" aria-hidden="true"><i id="barra"></i></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <form id="form" novalidate autocomplete="on">
+    <div class="honey" aria-hidden="true"><label>Não preencha <input type="text" id="site_url" tabindex="-1" autocomplete="off"></label></div>
+    <div id="etapas"></div>
+
+    <div class="card" id="etapa-revisao" hidden>
+      <h2>Confira e envie</h2>
+      <p class="intro">Dá uma olhada geral. Se quiser mudar alguma coisa, toque em "Editar".</p>
+      <div class="revisao" id="revisao"></div>
+      <div class="nota" id="erro-envio" role="alert" hidden></div>
+    </div>
+
+    <div class="card" id="etapa-ok" hidden>
+      <div class="ok-icone" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+      <h2>Recebemos, obrigado!</h2>
+      <p id="ok-txt">Suas respostas chegaram. A gente analisa e te chama no WhatsApp com a proposta do site.</p>
+    </div>
+  </form>
+</main>
+
+<div class="acoes" id="acoes">
+  <div class="wrap">
+    <button class="btn" id="voltar" type="button">Voltar</button>
+    <button class="btn primary" id="avancar" type="button">Continuar</button>
+  </div>
+</div>
+
+<script src="perguntas.js"></script>
+<script src="config.js"></script>
+<script>
+const LS = "briefing-cliente-rascunho";
+const $ = (s) => document.querySelector(s);
+const lsGet = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+const lsDel = (k) => { try { localStorage.removeItem(k); } catch {} };
+const novoId = () => "r-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+
+const params = new URLSearchParams(location.search);
+let estado = null;
+try { estado = JSON.parse(lsGet(LS) || "null"); } catch {}
+if (!estado || !estado.campos) estado = { id: novoId(), campos: {}, etapa: 0 };
+const refUrl = (params.get("ref") || "").trim().slice(0, 40);
+if (refUrl) estado.ref = refUrl;
+const nomeUrl = (params.get("negocio") || "").trim().slice(0, 120);
+if (nomeUrl && vazio(estado.campos["negocio.nome"])) estado.campos["negocio.nome"] = nomeUrl;
+
+const TOTAL = SECOES.length; // etapas de perguntas; TOTAL = revisão; TOTAL+1 = enviado
+const ctlId = (fid) => "f-" + fid.replace(/[^a-z0-9_]/gi, "-");
+let timer = null;
+function guardar() { clearTimeout(timer); timer = setTimeout(() => lsSet(LS, JSON.stringify(estado)), 300); }
+function definir(fid, v) { estado.campos[fid] = v; guardar(); }
+
+/* ---------- montar etapas ---------- */
+function montar() {
+  const box = $("#etapas");
+  SECOES.forEach((s, i) => {
+    const sec = document.createElement("section");
+    sec.className = "card"; sec.id = "etapa-" + i; sec.hidden = true;
+    const h = document.createElement("h2"); h.textContent = s.titulo; sec.appendChild(h);
+    if (s.intro) { const p = document.createElement("p"); p.className = "intro"; p.textContent = s.intro; sec.appendChild(p); }
+    s.campos.forEach((c) => sec.appendChild(campo(c)));
+    box.appendChild(sec);
+  });
+}
+
+function campo(c) {
+  const q = document.createElement("div");
+  q.className = "q"; q.dataset.q = c.id;
+  const id = ctlId(c.id);
+  const req = c.obrig ? `<span class="req" aria-hidden="true">*</span>` : "";
+  if (c.tipo === "um" || c.tipo === "varios") {
+    q.innerHTML = `<div class="lbl" id="${id}-l"></div><div class="opts" role="group" aria-labelledby="${id}-l"></div>`;
+    q.querySelector(".lbl").append(c.rotulo); q.querySelector(".lbl").insertAdjacentHTML("beforeend", req);
+    const opts = q.querySelector(".opts");
+    c.opcoes.forEach((o, k) => {
+      const l = document.createElement("label"); l.className = "opt";
+      const inp = document.createElement("input");
+      inp.type = "checkbox"; inp.id = `${id}-${k}`; inp.value = o; inp.dataset.fid = c.id;
+      const sp = document.createElement("span"); sp.textContent = o;
+      l.append(inp, sp); opts.appendChild(l);
+      inp.addEventListener("change", () => {
+        if (c.tipo === "um" && inp.checked) opts.querySelectorAll("input").forEach((x) => { if (x !== inp) x.checked = false; });
+        const m = [...opts.querySelectorAll("input:checked")].map((x) => x.value);
+        definir(c.id, c.tipo === "um" ? (m[0] || "") : m);
+        limparErro(q);
+        if (c.id === "negocio.ramo") atualizarRamo();
+      });
+    });
+    if (c.id === "negocio.ramo") {
+      const outro = document.createElement("input");
+      outro.type = "text"; outro.id = "f-ramo-outro"; outro.dataset.fid = "negocio.ramo_outro";
+      outro.placeholder = "Qual ramo?"; outro.setAttribute("aria-label", "Qual ramo?");
+      outro.addEventListener("input", () => definir("negocio.ramo_outro", outro.value));
+      q.appendChild(outro);
+    }
+  } else {
+    const tag = c.tipo === "area" ? "textarea" : "input";
+    q.innerHTML = `<label for="${id}"></label>` + (tag === "input" ? `<input id="${id}" type="${c.tipo === "tel" ? "tel" : "text"}">` : `<textarea id="${id}"></textarea>`);
+    q.querySelector("label").append(c.rotulo); q.querySelector("label").insertAdjacentHTML("beforeend", req);
+    const el = q.querySelector(tag);
+    if (c.ph) el.placeholder = c.ph;
+    if (c.tipo === "tel") el.autocomplete = "tel";
+    el.dataset.fid = c.id;
+    el.addEventListener("input", () => { definir(c.id, el.value); limparErro(q); });
+  }
+  if (c.ramo) { const b = document.createElement("div"); b.className = "ramo-box"; b.id = "ramo-box"; q.insertBefore(b, q.children[1]); }
+  if (c.dica) { const d = document.createElement("div"); d.className = "hint"; d.textContent = c.dica; q.appendChild(d); }
+  return q;
+}
+
+function atualizarRamo() {
+  const r = estado.campos["negocio.ramo"];
+  const outro = $("#f-ramo-outro"); if (outro) outro.hidden = r !== "Outro";
+  const box = $("#ramo-box"); const q = box && box.closest(".q");
+  if (!q) return;
+  q.hidden = !RAMO[r];
+  box.textContent = RAMO[r] ? RAMO[r] : "";
+}
+
+function preencher() {
+  document.querySelectorAll("[data-fid]").forEach((el) => {
+    const v = estado.campos[el.dataset.fid];
+    if (el.type === "checkbox") el.checked = Array.isArray(v) ? v.includes(el.value) : v === el.value;
+    else el.value = v || "";
+  });
+  atualizarRamo();
+}
+
+/* ---------- validação ---------- */
+function limparErro(q) { q.classList.remove("invalido"); const e = q.querySelector(".erro-msg"); if (e) e.remove(); }
+function validar(i) {
+  let primeiro = null;
+  SECOES[i].campos.forEach((c) => {
+    const q = document.querySelector(`[data-q="${c.id}"]`);
+    limparErro(q);
+    let falta = c.obrig && vazio(typeof estado.campos[c.id] === "string" ? estado.campos[c.id].trim() : estado.campos[c.id]);
+    if (!falta && c.tipo === "tel" && c.obrig && String(estado.campos[c.id]).replace(/\D/g, "").length < 10) falta = "Confira o número com DDD.";
+    if (falta) {
+      q.classList.add("invalido");
+      const m = document.createElement("div"); m.className = "erro-msg";
+      m.textContent = typeof falta === "string" ? falta : "Essa é obrigatória.";
+      q.appendChild(m);
+      if (!primeiro) primeiro = q;
+    }
+  });
+  if (primeiro) { primeiro.scrollIntoView({ block: "center" }); const f = primeiro.querySelector("input,textarea"); if (f) f.focus({ preventScroll: true }); }
+  return !primeiro;
+}
+
+/* ---------- navegação ---------- */
+function ir(n) {
+  estado.etapa = n;
+  if (n <= TOTAL) guardar();
+  for (let i = 0; i < TOTAL; i++) $("#etapa-" + i).hidden = i !== n;
+  $("#etapa-revisao").hidden = n !== TOTAL;
+  $("#etapa-ok").hidden = n !== TOTAL + 1;
+  $("#acoes").hidden = n === TOTAL + 1;
+  $("#voltar").hidden = n === 0;
+  $("#avancar").textContent = n === TOTAL ? "Enviar respostas" : n === TOTAL - 1 ? "Revisar" : "Continuar";
+  $("#passo").textContent = n < TOTAL ? `Parte ${n + 1} de ${TOTAL}` : n === TOTAL ? "Revisão" : "Enviado";
+  $("#barra").style.width = Math.min(100, Math.round((n / TOTAL) * 100)) + "%";
+  if (n === TOTAL) montarRevisao();
+  window.scrollTo(0, 0);
+}
+
+function montarRevisao() {
+  const box = $("#revisao"); box.innerHTML = "";
+  SECOES.forEach((s, i) => {
+    const sec = document.createElement("section");
+    const h = document.createElement("h3"); h.textContent = s.titulo;
+    const b = document.createElement("button"); b.type = "button"; b.className = "link"; b.textContent = "Editar";
+    b.addEventListener("click", () => ir(i)); h.appendChild(b);
+    const dl = document.createElement("dl");
+    s.campos.forEach((c) => {
+      let v = estado.campos[c.id];
+      if (c.id === "negocio.ramo" && v === "Outro" && estado.campos["negocio.ramo_outro"]) v = "Outro: " + estado.campos["negocio.ramo_outro"];
+      if (vazio(v)) return;
+      const dt = document.createElement("dt"); dt.textContent = c.rotulo;
+      const dd = document.createElement("dd"); dd.textContent = Array.isArray(v) ? v.join(", ") : v;
+      dl.append(dt, dd);
+    });
+    if (!dl.children.length) { const p = document.createElement("dd"); p.textContent = "Nada preenchido."; p.style.color = "var(--muted)"; dl.appendChild(p); }
+    sec.append(h, dl); box.appendChild(sec);
+  });
+}
+
+/* ---------- envio ---------- */
+async function enviar() {
+  const btn = $("#avancar"); const erro = $("#erro-envio");
+  erro.hidden = true;
+  if ($("#site_url").value) { ir(TOTAL + 1); return; } // robô
+  btn.disabled = true; btn.textContent = "Enviando…";
+  const data = new Date().toLocaleDateString("pt-BR");
+  const corpo = {
+    id: estado.id, ref: estado.ref || "", enviadoEm: new Date().toISOString(),
+    campos: estado.campos, md: gerarMd(estado.campos, { data, ref: estado.ref }),
+  };
+  try {
+    const r = await fetch(ENDPOINT, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(corpo) });
+    const j = await r.json();
+    if (!j.ok) throw new Error(j.erro || "falhou");
+    clearTimeout(timer); lsDel(LS);
+    const nome = (estado.campos["briefing.respondente"] || "").split(/[ ,]/)[0];
+    if (nome) $("#ok-txt").textContent = `Valeu, ${nome}! Suas respostas chegaram. A gente analisa e te chama no WhatsApp com a proposta do site.`;
+    ir(TOTAL + 1);
+  } catch (e) {
+    erro.hidden = false;
+    erro.textContent = "Não conseguimos enviar agora. Confira a internet e toque em \"Enviar respostas\" de novo. Suas respostas continuam salvas neste aparelho.";
+    btn.disabled = false; btn.textContent = "Enviar respostas";
+  }
+}
+
+$("#avancar").addEventListener("click", () => {
+  const n = estado.etapa;
+  if (n < TOTAL) { if (validar(n)) ir(n + 1); }
+  else if (n === TOTAL) {
+    for (let i = 0; i < TOTAL; i++) if (!validar(i)) { ir(i); validar(i); return; }
+    enviar();
+  }
+});
+$("#voltar").addEventListener("click", () => ir(Math.max(0, estado.etapa - 1)));
+
+montar(); preencher();
+ir(Math.min(estado.etapa || 0, TOTAL));
+</script>
+</body>
+</html>
