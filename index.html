@@ -3,76 +3,145 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Briefing do seu site</title>
-<meta name="description" content="Conte sobre o seu negócio para a gente montar um site que traga mais clientes.">
+<title>Freguesia · Seu site começa aqui</title>
+<meta name="description" content="Um site sob medida que trabalha enquanto você atende. Responda 10 minutos sobre o seu negócio e receba a proposta pelo WhatsApp.">
 <meta name="theme-color" content="#faf7f2">
 <meta name="robots" content="noindex">
-<meta property="og:title" content="Briefing do seu site">
-<meta property="og:description" content="Uns 10 minutinhos para a gente entender o seu negócio e montar a proposta do seu site.">
+<meta property="og:title" content="Freguesia · Seu site começa aqui">
+<meta property="og:description" content="Um site que trabalha enquanto você atende. 10 minutos de perguntas e a proposta chega no seu WhatsApp.">
+<meta property="og:image" content="https://gverasn.github.io/briefing/img/elainy.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
 <link rel="stylesheet" href="estilo.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%234f3bd9'/%3E%3Cstop offset='1' stop-color='%23f06a4b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='9' fill='url(%23g)'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11.5' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%234f3bd9'/%3E%3Cstop offset='1' stop-color='%23f06a4b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='10' fill='url(%23g)'/%3E%3Ccircle cx='16' cy='16' r='6' fill='white'/%3E%3C/svg%3E">
 </head>
 <body>
 <header class="top">
-  <div class="wrap">
-    <div class="top-row">
-      <h1><span class="marca" aria-hidden="true"></span>Briefing do seu site</h1>
-      <span class="passo" id="passo"></span>
-    </div>
-    <div class="barra" id="barra-box" aria-hidden="true"><i id="barra"></i></div>
+  <div class="wrap top-row">
+    <a class="marca" href="./" aria-label="Freguesia, início"><i aria-hidden="true"></i>Freguesia</a>
+    <span class="passo mono" id="passo">Sites para negócios locais</span>
   </div>
+  <div class="barra" id="barra-box" aria-hidden="true"><i id="barra"></i></div>
 </header>
 
-<main class="wrap">
-  <form id="form" novalidate autocomplete="on">
-    <div class="honey" aria-hidden="true"><label>Não preencha <input type="text" id="site_url" tabindex="-1" autocomplete="off"></label></div>
+<main>
+  <!-- ===== Página inicial ===== -->
+  <section class="landing" id="etapa-inicio" hidden>
+    <div class="wrap hero">
+      <span class="eyebrow mono">Proposta gratuita · leva 10 minutos</span>
+      <h1>Um site que <em class="grad">trabalha</em> enquanto você atende.</h1>
+      <p class="lede">Agenda, preços, WhatsApp e avaliações do Google num só lugar, <b>feito sob medida para o seu negócio</b>. Tudo começa com uma conversa rápida: você conta como funciona, a gente desenha o site ideal.</p>
+      <div class="cta-linha">
+        <button class="btn primary grande" type="button" data-comecar>Quero o meu site <span class="seta" aria-hidden="true">→</span></button>
+        <span class="micro mono">Sem compromisso · proposta pelo WhatsApp</span>
+        <button class="link" type="button" id="zerar" hidden>Já comecei antes. Quero começar do zero</button>
+      </div>
+      <div class="infos" role="list">
+        <div role="listitem"><span class="mono">Tempo</span><b>10 min</b><span>para responder</span></div>
+        <div role="listitem"><span class="mono">Proposta</span><b>R$ 0</b><span>para receber</span></div>
+        <div role="listitem"><span class="mono">Entrega</span><b>No zap</b><span>valor fechado, sem surpresa</span></div>
+      </div>
+    </div>
 
-    <section class="card boas-vindas" id="etapa-inicio" hidden>
-      <span class="selo">Cerca de 10 minutos</span>
-      <h2>Vamos entender o seu negócio para criar um site que <em>traga mais clientes</em></h2>
-      <p class="lede">Conte como o seu negócio funciona, quem são os seus clientes e o que mais toma o seu tempo. Assim o site já nasce pensado para vender mais e facilitar o seu dia a dia.</p>
-      <hr>
-      <p class="rotulo-secao">Como funciona</p>
-      <ol class="passos">
-        <li><span class="num">1</span><div><b>Você responde</b><span>Do seu jeito, com suas palavras. Só 6 perguntas são obrigatórias.</span></div></li>
-        <li><span class="num">2</span><div><b>A gente analisa</b><span>Estudamos as respostas e desenhamos o site ideal para o seu negócio.</span></div></li>
-        <li><span class="num">3</span><div><b>Você recebe a proposta</b><span>Pelo WhatsApp, com valor fechado e tudo o que está incluso.</span></div></li>
-      </ol>
-      <div class="dicas">
-        <b>Ajuda ter por perto:</b>
-        <ul>
-          <li>a lista de serviços ou produtos (e preços, se tiver);</li>
-          <li>o Instagram do negócio e de 2 ou 3 perfis que você acha bonitos.</li>
+    <div class="letreiro mono" aria-hidden="true">
+      <div class="trilho">
+        <span>Agendamento online</span><span>Cartão fidelidade</span><span>Botão de WhatsApp</span><span>Avaliações do Google</span><span>Cardápio e catálogo</span><span>Painel da equipe</span><span>Lembrete de horário</span>
+        <span>Agendamento online</span><span>Cartão fidelidade</span><span>Botão de WhatsApp</span><span>Avaliações do Google</span><span>Cardápio e catálogo</span><span>Painel da equipe</span><span>Lembrete de horário</span>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <section class="secao" aria-labelledby="t-dores">
+        <div class="secao-topo mono"><b>01</b><span>O problema</span></div>
+        <h2 id="t-dores">Quanto cliente você perde <em class="grad">sem perceber?</em></h2>
+        <ul class="dores">
+          <li>Responder o mesmo preço vinte vezes por dia no WhatsApp.</li>
+          <li>O cliente pergunta, some e marca no concorrente.</li>
+          <li>Agenda espalhada entre caderno, áudio e mensagem.</li>
+          <li>Quem te procura no Google não encontra nada que convença.</li>
         </ul>
-      </div>
+        <p class="virada">Um site bem feito resolve isso no automático. Ele <b>responde, mostra, agenda e convence</b> de madrugada, no domingo e no feriado, enquanto você cuida de quem está na sua frente.</p>
+      </section>
+
+      <section class="secao" aria-labelledby="t-projetos">
+        <div class="secao-topo mono"><b>02</b><span>Projetos no ar</span></div>
+        <h2 id="t-projetos">Feitos por nós. <em class="grad">Funcionando agora.</em></h2>
+        <p class="apoio">Cada negócio pede uma solução diferente. Dois exemplos reais:</p>
+        <div class="projetos">
+          <article class="projeto">
+            <div class="tela"><img src="img/elainy.jpg" alt="Tela inicial do site do Salão Elainy Ferraz no celular" width="600" height="1200" loading="lazy"></div>
+            <div class="info">
+              <span class="mono">Salão de beleza</span>
+              <h3>Elainy Ferraz</h3>
+              <p>A cliente escolhe o serviço, a profissional e o horário sozinha. Sem esperar resposta.</p>
+              <ul><li>Agenda online por profissional</li><li>Serviços e preços</li><li>Painel para a equipe</li></ul>
+              <a href="https://elainyferraz.com.br/" target="_blank" rel="noopener">Ver o site →</a>
+            </div>
+          </article>
+          <article class="projeto">
+            <div class="tela"><img src="img/barberman.jpg" alt="Tela inicial do site da Barbearia BarbermaN no celular" width="600" height="1200" loading="lazy"></div>
+            <div class="info">
+              <span class="mono">Barbearia · BH</span>
+              <h3>BarbermaN</h3>
+              <p>Cartão fidelidade digital: a cada 10 cortes, 1 é por conta da casa. O cliente volta sozinho.</p>
+              <ul><li>Fidelidade com QR code</li><li>Avaliação no Google em 1 toque</li><li>Painel do dono</li></ul>
+              <a href="https://barbeariabarbermanbh.github.io/" target="_blank" rel="noopener">Ver o site →</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="secao" aria-labelledby="t-como">
+        <div class="secao-topo mono"><b>03</b><span>Como funciona</span></div>
+        <h2 id="t-como">Três passos até o <em class="grad">seu site no ar.</em></h2>
+        <div class="etapas-lista">
+          <div><span class="n grad">01</span><div><b>Você conta</b><span>Um briefing rápido sobre o seu negócio, do seu jeito, com as suas palavras. Só 6 perguntas são obrigatórias.</span></div></div>
+          <div><span class="n grad">02</span><div><b>A gente desenha</b><span>Estudamos as respostas e montamos o site ideal: o que mostrar, em que ordem e o botão que mais traz cliente.</span></div></div>
+          <div><span class="n grad">03</span><div><b>Você decide</b><span>A proposta chega no seu WhatsApp com valor fechado e tudo o que está incluso. Sem letra miúda.</span></div></div>
+        </div>
+      </section>
+
+      <section class="fecho" aria-labelledby="t-fecho">
+        <span class="mono">Seu próximo passo</span>
+        <h2 id="t-fecho">10 minutos agora. Clientes chegando sozinhos depois.</h2>
+        <p>Ajuda ter por perto a lista de serviços (e preços, se tiver) e 2 ou 3 perfis de Instagram que você acha bonitos.</p>
+        <button class="btn grande" type="button" data-comecar>Começar agora <span class="seta" aria-hidden="true">→</span></button>
+      </section>
       <p class="privacidade">Pode parar e voltar depois: as respostas ficam guardadas neste aparelho até você enviar. Usamos as informações só para montar a sua proposta.</p>
-    </section>
+    </div>
+  </section>
 
-    <div id="etapas"></div>
+  <!-- ===== Formulário ===== -->
+  <div class="wrap form-area" id="form-area" hidden>
+    <form id="form" novalidate autocomplete="on">
+      <div class="honey" aria-hidden="true"><label>Não preencha <input type="text" id="site_url" tabindex="-1" autocomplete="off"></label></div>
+      <div id="etapas"></div>
 
-    <div class="card" id="etapa-revisao" hidden>
-      <h2>Confira e envie</h2>
-      <p class="intro">Dá uma olhada geral. Se quiser mudar alguma coisa, toque em "Editar".</p>
-      <div class="revisao" id="revisao"></div>
-      <div class="q" data-q="consentimento">
-        <label class="check"><input type="checkbox" id="consentimento"><span>Autorizo o uso destas informações para elaborar a proposta do meu site e para entrarem em contato comigo pelo WhatsApp.</span></label>
+      <div class="card" id="etapa-revisao" hidden>
+        <span class="eyebrow-parte mono">Última etapa</span>
+        <h2>Confira e envie</h2>
+        <p class="intro">Dá uma olhada geral. Se quiser mudar alguma coisa, toque em "Editar".</p>
+        <div class="revisao" id="revisao"></div>
+        <div class="q" data-q="consentimento">
+          <label class="check"><input type="checkbox" id="consentimento"><span>Autorizo o uso destas informações para elaborar a proposta do meu site e para entrarem em contato comigo pelo WhatsApp.</span></label>
+        </div>
+        <div class="nota" id="erro-envio" role="alert" hidden></div>
       </div>
-      <div class="nota" id="erro-envio" role="alert" hidden></div>
-    </div>
 
-    <div class="card" id="etapa-ok" hidden>
-      <div class="ok-icone" aria-hidden="true"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
-      <h2>Recebemos, obrigado!</h2>
-      <p id="ok-txt">Suas respostas chegaram. A gente analisa e te chama no WhatsApp com a proposta do site.</p>
-    </div>
-  </form>
+      <div class="card" id="etapa-ok" hidden>
+        <div class="ok-icone" aria-hidden="true"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <span class="eyebrow-parte mono">Tudo certo</span>
+        <h2>Recebemos. Agora é com a gente.</h2>
+        <p id="ok-txt">Suas respostas chegaram. A gente analisa e te chama no WhatsApp com a proposta do site.</p>
+      </div>
+    </form>
+  </div>
 </main>
 
 <div class="acoes" id="acoes">
   <div class="wrap">
+    <div class="resumo"><b>Seu site começa aqui</b>10 min · sem compromisso</div>
     <button class="btn" id="voltar" type="button">Voltar</button>
     <button class="btn primary" id="avancar" type="button">Continuar</button>
   </div>
@@ -97,14 +166,12 @@ const refUrl = (params.get("ref") || "").trim().slice(0, 40);
 if (refUrl) estado.ref = refUrl;
 const nomeUrl = (params.get("negocio") || "").trim().slice(0, 120);
 if (nomeUrl && vazio(estado.campos["negocio.nome"])) estado.campos["negocio.nome"] = nomeUrl;
-const temRascunho = Object.keys(estado.campos).some((k) => !vazio(estado.campos[k]) && k !== "negocio.nome");
 
 const ctlId = (fid) => "f-" + fid.replace(/[^a-z0-9_]/gi, "-");
-const campoPorId = {};
-SECOES.forEach((s) => s.campos.forEach((c) => { campoPorId[c.id] = c; }));
-let timer = null, armado = false;
+let timer = null;
 function guardar() { clearTimeout(timer); timer = setTimeout(() => lsSet(LS, JSON.stringify(estado)), 300); }
 function definir(fid, v) { estado.campos[fid] = v; guardar(); }
+const pad = (n) => String(n).padStart(2, "0");
 
 /* Máscara de telefone: (61) 9 1234-5678 */
 function mascara(v) {
@@ -124,6 +191,7 @@ function montar() {
   SECOES.forEach((s, i) => {
     const sec = document.createElement("section");
     sec.className = "card"; sec.id = "etapa-" + i; sec.hidden = true;
+    const e = document.createElement("span"); e.className = "eyebrow-parte mono"; e.textContent = `Parte ${pad(i + 1)} de ${pad(TOTAL)}`; sec.appendChild(e);
     const h = document.createElement("h2"); h.textContent = s.titulo; sec.appendChild(h);
     if (s.intro) { const p = document.createElement("p"); p.className = "intro"; p.textContent = s.intro; sec.appendChild(p); }
     s.campos.forEach((c) => sec.appendChild(campo(c)));
@@ -226,27 +294,34 @@ function validar(i) {
 }
 
 /* ---------- navegação ---------- */
+const temRascunho = () => Object.keys(estado.campos).some((k) => !vazio(estado.campos[k]) && k !== "negocio.nome");
 function ir(n) {
   estado.etapa = n;
   if (n >= 0 && n <= REVISAO) estado.ultima = n;
   if (n !== OK) guardar();
-  armado = false;
-  $("#etapa-inicio").hidden = n !== INICIO;
+  const capa = n === INICIO;
+  $("#etapa-inicio").hidden = !capa;
+  $("#form-area").hidden = capa;
   for (let i = 0; i < TOTAL; i++) $("#etapa-" + i).hidden = i !== n;
   $("#etapa-revisao").hidden = n !== REVISAO;
   $("#etapa-ok").hidden = n !== OK;
   $("#acoes").hidden = n === OK;
-  $("#barra-box").hidden = n === INICIO;
-  $("#voltar").hidden = n === INICIO ? !temRascunhoAgora() : false;
-  $("#voltar").textContent = n === INICIO ? "Recomeçar" : "Voltar";
-  $("#avancar").textContent = n === INICIO ? (temRascunhoAgora() ? "Continuar" : "Começar")
+  $("#acoes").classList.toggle("na-capa", capa);
+  $("#barra-box").hidden = capa;
+  $("#passo").classList.toggle("na-capa", capa);
+  $("#voltar").hidden = capa;
+  $("#zerar").hidden = !(capa && temRascunho());
+  $("#zerar").textContent = "Já comecei antes. Quero começar do zero";
+  const continuar = capa && temRascunho();
+  document.querySelectorAll("[data-comecar]").forEach((b) => { b.firstChild.textContent = continuar ? "Continuar de onde parei " : (b.closest(".fecho") ? "Começar agora " : "Quero o meu site "); });
+  $("#avancar").innerHTML = capa ? (continuar ? "Continuar" : "Começar") + ' <span class="seta" aria-hidden="true">→</span>'
     : n === REVISAO ? "Enviar respostas" : n === TOTAL - 1 ? "Revisar" : "Continuar";
-  $("#passo").textContent = n === INICIO ? "" : n < TOTAL ? `Parte ${n + 1} de ${TOTAL}` : n === REVISAO ? "Revisão" : "Enviado";
-  $("#barra").style.width = Math.max(0, Math.min(100, Math.round((n / TOTAL) * 100))) + "%";
+  $("#passo").textContent = capa ? "Sites para negócios locais" : n < TOTAL ? `Parte ${pad(n + 1)} / ${pad(TOTAL)}` : n === REVISAO ? "Revisão" : "Enviado";
+  $("#barra").style.width = Math.max(0, Math.min(100, Math.round(((n + 1) / (TOTAL + 1)) * 100))) + "%";
   if (n === REVISAO) montarRevisao();
   window.scrollTo(0, 0);
 }
-const temRascunhoAgora = () => Object.keys(estado.campos).some((k) => !vazio(estado.campos[k]) && k !== "negocio.nome");
+function comecar() { ir(temRascunho() && estado.ultima != null ? estado.ultima : 0); }
 
 function montarRevisao() {
   const box = $("#revisao"); box.innerHTML = "";
@@ -288,7 +363,7 @@ async function enviar() {
     if (!j.ok) throw new Error(j.erro || "falhou");
     clearTimeout(timer); lsDel(LS);
     const nome = (estado.campos["briefing.respondente"] || "").trim().split(/[\s,]/)[0];
-    if (nome) $("#ok-txt").textContent = `Valeu, ${nome}! Suas respostas chegaram. A gente analisa e te chama no WhatsApp com a proposta do site.`;
+    if (nome) $("#ok-txt").textContent = `Valeu, ${nome}! Suas respostas chegaram. A gente analisa com calma e te chama no WhatsApp com a proposta do seu site.`;
     ir(OK);
   } catch (e) {
     erro.hidden = false;
@@ -298,9 +373,10 @@ async function enviar() {
 }
 
 $("#consentimento").addEventListener("change", (e) => { definir("consentimento", e.target.checked); limparErro(e.target.closest(".q")); });
+document.querySelectorAll("[data-comecar]").forEach((b) => b.addEventListener("click", comecar));
 $("#avancar").addEventListener("click", () => {
   const n = estado.etapa;
-  if (n === INICIO) { ir(temRascunhoAgora() && estado.ultima != null ? estado.ultima : 0); return; }
+  if (n === INICIO) { comecar(); return; }
   if (n < TOTAL) { if (validar(n)) ir(n + 1); return; }
   if (n === REVISAO) {
     for (let i = 0; i < TOTAL; i++) if (!validar(i)) { ir(i); validar(i); return; }
@@ -309,13 +385,12 @@ $("#avancar").addEventListener("click", () => {
     enviar();
   }
 });
-$("#voltar").addEventListener("click", () => {
-  const n = estado.etapa;
-  if (n === INICIO) {
-    if (!armado) { armado = true; $("#voltar").textContent = "Apagar tudo?"; setTimeout(() => { if (armado) ir(INICIO); }, 4000); return; }
-    estado = { id: novoId(), campos: {}, etapa: INICIO, ref: estado.ref }; preencher(); ir(INICIO); return;
-  }
-  ir(n === 0 ? INICIO : n - 1);
+$("#voltar").addEventListener("click", () => ir(estado.etapa === 0 ? INICIO : estado.etapa - 1));
+let armado = false;
+$("#zerar").addEventListener("click", () => {
+  if (!armado) { armado = true; $("#zerar").textContent = "Toque de novo para apagar as respostas"; setTimeout(() => { armado = false; ir(INICIO); }, 4000); return; }
+  armado = false;
+  estado = { id: novoId(), campos: {}, etapa: INICIO, ref: estado.ref }; preencher(); ir(INICIO);
 });
 
 montar(); preencher();
