@@ -31,9 +31,11 @@
     <div class="honey" aria-hidden="true"><label>Não preencha <input type="text" id="site_url" tabindex="-1" autocomplete="off"></label></div>
 
     <section class="card boas-vindas" id="etapa-inicio" hidden>
-      <span class="selo">⏱ Cerca de 10 minutos</span>
+      <span class="selo">Cerca de 10 minutos</span>
       <h2>Vamos entender o seu negócio para criar um site que <em>traga mais clientes</em></h2>
-      <p>Um bom site começa por uma boa conversa. Essas perguntas mostram para a gente como o seu negócio funciona, quem são os seus clientes e o que mais toma o seu tempo hoje. Com isso, o site já nasce pensado para vender mais e facilitar o seu dia a dia.</p>
+      <p class="lede">Conte como o seu negócio funciona, quem são os seus clientes e o que mais toma o seu tempo. Assim o site já nasce pensado para vender mais e facilitar o seu dia a dia.</p>
+      <hr>
+      <p class="rotulo-secao">Como funciona</p>
       <ol class="passos">
         <li><span class="num">1</span><div><b>Você responde</b><span>Do seu jeito, com suas palavras. Só 6 perguntas são obrigatórias.</span></div></li>
         <li><span class="num">2</span><div><b>A gente analisa</b><span>Estudamos as respostas e desenhamos o site ideal para o seu negócio.</span></div></li>
@@ -237,7 +239,7 @@ function ir(n) {
   $("#barra-box").hidden = n === INICIO;
   $("#voltar").hidden = n === INICIO ? !temRascunhoAgora() : false;
   $("#voltar").textContent = n === INICIO ? "Recomeçar" : "Voltar";
-  $("#avancar").textContent = n === INICIO ? (temRascunhoAgora() ? "Continuar de onde parei" : "Começar")
+  $("#avancar").textContent = n === INICIO ? (temRascunhoAgora() ? "Continuar" : "Começar")
     : n === REVISAO ? "Enviar respostas" : n === TOTAL - 1 ? "Revisar" : "Continuar";
   $("#passo").textContent = n === INICIO ? "" : n < TOTAL ? `Parte ${n + 1} de ${TOTAL}` : n === REVISAO ? "Revisão" : "Enviado";
   $("#barra").style.width = Math.max(0, Math.min(100, Math.round((n / TOTAL) * 100))) + "%";
